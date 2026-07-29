@@ -51,7 +51,7 @@ async function  register (req, res) {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: 'Server error', err});
   }
 };
 
