@@ -3,12 +3,15 @@
 
 import express from 'express';
 import cors from 'cors';
+import connectDB from './config/db.js';
 
 import productRoute from './routes/product_routes.js';
 
 
 const app = express();
 const PORT = 3000;
+
+connectDB();
 
 // const productRoute = require('./routes/product_routes');
 
