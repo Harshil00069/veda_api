@@ -1,15 +1,14 @@
-// const express = require('express');
-// const cors = require('cors');
-
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
 import productRoute from './routes/product_routes.js';
-
+console.log('Current Folder:', process.cwd());
+console.log('MONGO_URI loaded:', process.env.MONGO_URI);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 
 connectDB();
 
