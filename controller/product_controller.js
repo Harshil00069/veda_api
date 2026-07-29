@@ -15,30 +15,39 @@ function generateToken(userId) {
 }
  
 // POST /api/auth/register  -> create user
-async function  register (req, res) {
+async function register(req, res) {
   try {
-    const { name, phone, password, gender } = req.body;
- 
+    // 1. Safe destructuring in case req.body is undefined
+    const { name, phone, password, gender } = req.body || {};
+
+    // 2. Validation check
     if (!name || !phone || !password || !gender) {
-      return res.status(400).json({ message: 'name, phone, password and gender are required' });
+      return res.status(400).json({ 
+        message: 'name, phone, password and gender are required' 
+      });
     }
- 
+
+    // 3. Check for existing user
     const existingUser = await User.findOne({ phone });
     if (existingUser) {
       return res.status(400).json({ message: 'Phone number already registered' });
     }
- 
+
+    // 4. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
- 
+
+    // 5. Create user in DB
     const user = await User.create({
       name,
       phone,
       password: hashedPassword,
       gender,
     });
- 
+
+    // 6. Generate JWT token
     const token = generateToken(user._id);
- 
+
+    // 7. Success response
     return res.status(201).json({
       token,
       user: {
@@ -50,11 +59,16 @@ async function  register (req, res) {
       },
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Server error', err});
-  }
-};
+    console.error('Registration Error:', err);
 
+    // 8. Proper error formatting so details show up in Postman/Client
+    return res.status(500).json({ 
+      message: err.message || 'Server error',
+      errorName: err.name,
+      stack: err.stack 
+    });
+  }
+}
 // POST /api/auth/login
 async function  login (req, res) {
   try {
