@@ -75,12 +75,12 @@ async function  login (req, res) {
     const { phone, password } = req.body;
  
     if (!phone || !password) {
-      return res.status(200).json({ message: 'phone and password are required' });
+      return res.status(200).json({status: 0, message: 'phone and password are required' });
     }
  
     const user = await User.findOne({ phone });
     if (!user) {
-      return res.status(200).json({ message: 'Invalid phone number or password' });
+      return res.status(200).json({status: 0, message: 'Invalid phone number or password' });
     }
  
     const isMatch = await bcrypt.compare(password, user.password);
