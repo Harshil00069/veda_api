@@ -48,7 +48,7 @@ async function register(req, res) {
     const token = generateToken(user._id);
 
     // 7. Success response
-    return res.status(201).json({
+    return res.status(200).json({
       token,
       user: {
         id: user._id,
@@ -75,17 +75,17 @@ async function  login (req, res) {
     const { phone, password } = req.body;
  
     if (!phone || !password) {
-      return res.status(400).json({ message: 'phone and password are required' });
+      return res.status(200).json({ message: 'phone and password are required' });
     }
  
     const user = await User.findOne({ phone });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid phone number or password' });
+      return res.status(200).json({ message: 'Invalid phone number or password' });
     }
  
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({status: 0 ,message: 'Invalid phone number or password' });
+      return res.status(200).json({status: 0 ,message: 'Invalid phone number or password' });
     }
  
     const token = generateToken(user._id);
