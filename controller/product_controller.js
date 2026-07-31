@@ -85,12 +85,13 @@ async function  login (req, res) {
  
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid phone number or password' });
+      return res.status(401).json({status: 0 ,message: 'Invalid phone number or password' });
     }
  
     const token = generateToken(user._id);
  
     return res.status(200).json({
+      status: 1,
       token,
       user: {
         id: user._id,
