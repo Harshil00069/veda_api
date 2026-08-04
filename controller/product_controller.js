@@ -48,16 +48,10 @@ async function register(req, res) {
     const token = generateToken(user._id);
 
     // 7. Success response
-    return res.status(200).json({
+return res.status(201).json({
+      status: 1,
+      message: 'Account created successfully',
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        phone: user.phone,
-        gender: user.gender,
-         password:user.password,
-        profileStatus: user.profileStatus,
-      },
     });
   } catch (err) {
     console.error('Registration Error:', err);
