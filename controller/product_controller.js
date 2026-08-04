@@ -31,7 +31,7 @@ async function register(req, res) {
     // 3. Check for existing user
     const existingUser = await User.findOne({ phone });
     if (existingUser) {
-      return res.status(400).json({ message: 'Phone number already registered' });
+      return res.status(200).json({status: 0, message: 'Phone number already registered' });
     }
 
     // 4. Hash password
