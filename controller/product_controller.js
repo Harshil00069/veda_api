@@ -3,7 +3,7 @@ import  console  from 'console';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../model/User.js";
-import { connectDB } from "../config/db.js";
+import connectDB from "../config/db.js";
 // const bcrypt = require('bcryptjs');
 // const jwt = require('jsonwebtoken');
 // const User = require('../model/User');
