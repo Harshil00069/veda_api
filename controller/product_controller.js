@@ -22,7 +22,8 @@ async function register(req, res) {
 
     // 2. Validation check
     if (!name || !phone || !password || !gender) {
-      return res.status(400).json({ 
+      return res.status(200).json({ 
+        status: 0,
         message: 'name, phone, password and gender are required' 
       });
     }
@@ -48,7 +49,7 @@ async function register(req, res) {
     const token = generateToken(user._id);
 
     // 7. Success response
-return res.status(201).json({
+return res.status(200).json({
       status: 1,
       message: 'Account created successfully',
       token,
