@@ -66,43 +66,107 @@ return res.status(200).json({
   }
 }
 // POST /api/auth/login
-async function  login (req, res) {
+// async function  login (req, res) {
+//   try {
+//     const { phone, password } = req.body;
+ 
+//     if (!phone || !password) {
+//       return res.status(200).json({status: 0, message: 'phone and password are required' });
+//     }
+ 
+//     const user = await User.findOne({ phone });
+//     if (!user) {
+//       return res.status(200).json({status: 0, message: 'Invalid phone number or password' });
+//     }
+ 
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(200).json({status: 0 ,message: 'Invalid phone number or password' });
+//     }
+ 
+//     const token = generateToken(user._id);
+ 
+//     return res.status(200).json({
+//       status: 1,
+//       token,
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         phone: user.phone,
+//         gender: user.gender,
+//         password:user.password,
+//         profileStatus: user.profileStatus,
+//       },
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+async function login(req, res) {
   try {
-    const { phone, password } = req.body;
- 
+    // 1. MUST Connect to DB first (fixes 500 buffering timeout in serverless)
+    await connectDB();
+
+    // 2. Safe destructuring in case req.body is undefined
+    const { phone, password } = req.body || {};
+
+    // 3. Validation check
     if (!phone || !password) {
-      return res.status(200).json({status: 0, message: 'phone and password are required' });
+      return res.status(200).json({ 
+        status: 0, 
+        message: 'phone and password are required' 
+      });
     }
- 
+
+    // 4. Find user by phone
     const user = await User.findOne({ phone });
     if (!user) {
-      return res.status(200).json({status: 0, message: 'Invalid phone number or password' });
+      return res.status(200).json({ 
+        status: 0, 
+        message: 'Invalid phone number or password' 
+      });
     }
- 
+
+    // 5. Compare entered password with stored bcrypt hash
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(200).json({status: 0 ,message: 'Invalid phone number or password' });
+      return res.status(200).json({ 
+        status: 0, 
+        message: 'Invalid phone number or password' 
+      });
     }
- 
+
+    // 6. Generate JWT token using numeric user._id
     const token = generateToken(user._id);
- 
+
+    // 7. Success response
     return res.status(200).json({
       status: 1,
+      message: 'Login successful',
       token,
       user: {
-        id: user._id,
+        id: user._id, // Will return numeric ID (101, 102, etc.)
         name: user.name,
         phone: user.phone,
         gender: user.gender,
-        password:user.password,
+        // REMOVED: password field for security
         profileStatus: user.profileStatus,
       },
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Server error' });
+    console.error('Login Error:', err);
+
+    // 8. Output error details in response for easier debugging in Postman
+    return res.status(500).json({ 
+      status: 0,
+      message: err.message || 'Server error',
+      errorName: err.name,
+      stack: err.stack 
+    });
   }
-};
+}
 
 
 export {
