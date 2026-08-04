@@ -55,6 +55,7 @@ async function register(req, res) {
         name: user.name,
         phone: user.phone,
         gender: user.gender,
+         password:user.password,
         profileStatus: user.profileStatus,
       },
     });
