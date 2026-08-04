@@ -131,7 +131,8 @@ async function login(req, res) {
     }
 
     // 5. Compare entered password with stored bcrypt hash
-    const isMatch = await bcrypt.compare(password, user.password);
+    // const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = (password === user.password);
     if (!isMatch) {
       return res.status(200).json({ 
         status: 0, 
