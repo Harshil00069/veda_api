@@ -126,7 +126,7 @@ async function login(req, res) {
     if (!user) {
       return res.status(200).json({ 
         status: 0, 
-        message: 'Invalid phone number or password' 
+        message: 'Invalid phone number' 
       });
     }
 
