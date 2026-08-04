@@ -105,7 +105,7 @@ return res.status(200).json({
 //   }
 // };
 
-async function login(req, res) {
+async function login(req, res) { 
   try {
     // 1. MUST Connect to DB first (fixes 500 buffering timeout in serverless)
     await connectDB();
