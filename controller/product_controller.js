@@ -35,13 +35,13 @@ async function register(req, res) {
     }
 
     // 4. Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     // 5. Create user in DB
     const user = await User.create({
       name,
       phone,
-      password: hashedPassword,
+      password,
       gender,
     });
 
