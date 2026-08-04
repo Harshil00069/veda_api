@@ -58,7 +58,6 @@ userSchema.pre("save", async function (next) {
     );
     this._id = counter.seq;
   }
-  next();
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
