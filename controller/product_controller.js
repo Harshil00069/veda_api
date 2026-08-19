@@ -246,7 +246,7 @@ async function login(req, res) {
 }
 
 
-export async function adminLogin(req, res) {
+ async function adminLogin(req, res) {
   try {
     // 1. Connect DB
     await connectDB();
