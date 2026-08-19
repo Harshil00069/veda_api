@@ -246,8 +246,93 @@ async function login(req, res) {
 }
 
 
+export async function adminLogin(req, res) {
+  try {
+    // 1. Connect DB
+    await connectDB();
+
+    // 2. Get request data
+    const { email, password } = req.body || {};
+
+    // 3. Validation
+    if (!email || !password) {
+      return res.status(200).json({
+        status: 0,
+        message: "email and password are required",
+      });
+    }
+
+    // 4. Find admin
+    const admin = await Admin.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (!admin) {
+      return res.status(200).json({
+        status: 0,
+        message: "Invalid email or password",
+      });
+    }
+
+    // 5. Check account active
+    if (!admin.isActive) {
+      return res.status(200).json({
+        status: 0,
+        message: "Admin account is inactive",
+      });
+    }
+
+    // 6. Check password
+    const isMatch = await bcrypt.compare(
+      password,
+      admin.password
+    );
+
+    if (!isMatch) {
+      return res.status(200).json({
+        status: 0,
+        message: "Invalid email or password",
+      });
+    }
+
+    // 7. Update last login
+    admin.lastLoginAt = new Date();
+    await admin.save();
+
+    // 8. Generate JWT
+    const token = generateToken(admin._id);
+
+    // 9. Success
+    return res.status(200).json({
+      status: 1,
+      message: "Login successful",
+      token,
+
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        mobile: admin.mobile,
+        role: admin.role,
+        permissions: admin.permissions,
+        isActive: admin.isActive,
+      },
+    });
+  } catch (err) {
+    console.error("Admin Login Error:", err);
+
+    return res.status(500).json({
+      status: 0,
+      message: err.message || "Server error",
+      errorName: err.name,
+    });
+  }
+}
+
+
 export {
   register,
   registerAdmin,
-  login
+  login,
+  adminLogin
 };
