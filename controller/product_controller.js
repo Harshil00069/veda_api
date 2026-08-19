@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../model/User.js";
 import connectDB from "../config/db.js";
+import Admin from "../model/admin_user_model.js";
 // const bcrypt = require('bcryptjs');
 // const jwt = require('jsonwebtoken');
 // const User = require('../model/User');
@@ -66,6 +67,84 @@ return res.status(200).json({
     });
   }
 }
+
+
+
+async function registerAdmin(req, res) {
+  try {
+    const {
+      name,
+      email,
+      mobile,
+      password,
+      role,
+      permissions,
+    } = req.body || {};
+
+    // 1. Validation
+    if (!name || !email || !password) {
+      return res.status(200).json({
+        status: 0,
+        message: "name, email and password are required",
+      });
+    }
+
+    // 2. Check existing admin
+    const existingAdmin = await Admin.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (existingAdmin) {
+      return res.status(200).json({
+        status: 0,
+        message: "Email already registered",
+      });
+    }
+
+    // // 3. Hash password
+    // const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Create admin
+    const admin = await Admin.create({
+      name,
+      email: email.toLowerCase(),
+      mobile,
+      password: password,
+      role: role || "STAFF",
+      permissions: permissions || [],
+    });
+
+    // 5. Generate JWT
+    const token = generateToken(admin._id);
+
+    // 6. Success response
+    return res.status(200).json({
+      status: 1,
+      message: "Admin account created successfully",
+      token,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        mobile: admin.mobile,
+        role: admin.role,
+        permissions: admin.permissions,
+      },
+    });
+  } catch (err) {
+    console.error("Admin Registration Error:", err);
+
+    return res.status(500).json({
+      status: 0,
+      message: err.message || "Server error",
+      errorName: err.name,
+    });
+  }
+}
+
+module.exports = {
+  registerAdmin,
+};
 // POST /api/auth/login
 // async function  login (req, res) {
 //   try {
@@ -173,5 +252,6 @@ async function login(req, res) {
 
 export {
   register,
+  registerAdmin,
   login
 };
