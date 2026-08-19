@@ -72,6 +72,8 @@ return res.status(200).json({
 
 async function registerAdmin(req, res) {
   try {
+     await connectDB();
+
     const {
       name,
       email,
