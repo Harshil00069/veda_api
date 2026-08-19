@@ -141,10 +141,6 @@ async function registerAdmin(req, res) {
     });
   }
 }
-
-module.exports = {
-  registerAdmin,
-};
 // POST /api/auth/login
 // async function  login (req, res) {
 //   try {
